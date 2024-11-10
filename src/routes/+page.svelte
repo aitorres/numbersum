@@ -5,7 +5,7 @@
 
     // Game configuration
     let gridSize: number = 5;
-    let maxNumber: number = 8;
+    let maxNumber: number = 7;
     let shownNumberProportion: number = 0.40;
 
     // Setting up game state -- this is only done once per game
@@ -29,6 +29,11 @@
     // to be filled in by the player
     function setupPartialGrid(): (number | null)[][] {
         return grid.map(row => row.map(cell => Math.random() < shownNumberProportion ? cell : null));
+    }
+
+    // Counts the amount of empty spaces in the partial grid
+    function getEmptySpaces(): number {
+        return partialGrid.reduce((acc, row) => acc + row.filter(cell => cell === null).length, 0);
     }
 
     // Returns the sum of a row in the grid
@@ -71,18 +76,31 @@
     // Checks if the game is complete by checking if all input fields are filled
     // and have the correct values
     function isGameComplete(): boolean {
+        // Sanity check: has the document been loaded?
         if (typeof document === 'undefined') {
             return false;
         }
 
+        // Sanity check: are there any input fields?
         let inputs = document.querySelectorAll('.gridInput');
-        for (let input of inputs) {
-            if ((input as HTMLInputElement).value === '' || input.classList.contains(invalidClass)) {
+        if (inputs.length === 0) {
             return false;
+        }
+
+        // If any input field is empty or invalid, the game is not complete
+        for (let input of inputs) {
+            let inputValue = (input as HTMLInputElement).valueAsNumber;
+            console.log(input, inputValue, isNaN(inputValue), input.classList.contains(invalidClass));
+
+            if (isNaN(inputValue) || input.classList.contains(invalidClass)) {
+                return false;
             }
         }
 
-        return true;
+        // Sanity check: if there are no empty / invalid fields AND the number of valid inputs
+        // matches the number of empty spaces, the game is complete
+        let validInputs = document.querySelectorAll('.gridInput.valid').length;
+        return getEmptySpaces() === validInputs;
     }
 </script>
 
