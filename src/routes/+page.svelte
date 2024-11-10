@@ -6,7 +6,7 @@
 	// Game configuration
 	let gridSize: number = 5;
 	let maxNumber: number = 7;
-	let shownNumberProportion: number = 0.45;
+	let shownNumberProportion: number = 0.50;
 
 	// Setting up game state -- this is only done once per game
 	let grid: number[][] = setupGrid(gridSize);
