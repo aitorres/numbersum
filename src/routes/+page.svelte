@@ -104,16 +104,67 @@
 		let validInputs = document.querySelectorAll('.gridInput.valid').length;
 		return getEmptySpaces() === validInputs;
 	}
+
+	// Language handling
+	type Language = 'en' | 'es';
+
+	// Attempt to get language from GET, default to English
+	let language: Language = 'en';
+	if (typeof window !== 'undefined') {
+		let urlParams = new URLSearchParams(window.location.search);
+		let urlLangParam: string | null = urlParams.get('lang');
+		if (urlLangParam !== null && ['en', 'es'].includes(urlLangParam)) {
+			language = urlParams.get('lang') as Language;
+		}
+	}
+
+	// Strings per language
+	const translatedStrings = {
+		en: {
+			explanationGridOfSize: 'The following grid of size',
+			explanationPartiallyComplete: 'is partially complete with whole numbers from 1 to',
+			explanationSumShown: 'The sum of each row and column is shown on the edges of the grid.',
+			explanationFillIn: 'Fill in the missing numbers to complete the grid.',
+			changeLanguage: 'En Español',
+			congratulationsCompleted: 'Congratulations! You have completed the grid.',
+			restartGame: 'Restart game',
+			footerMadeWith: 'Made with',
+			footerBy: 'by'
+		},
+		es: {
+			explanationGridOfSize: 'El siguiente tablero de tamaño',
+			explanationPartiallyComplete: 'está parcialmente completado con números enteros del 1 al',
+			explanationSumShown: 'La suma de cada fila y columna se muestra en los bordes del tablero.',
+			explanationFillIn: 'Rellena los números faltantes para completar el tablero.',
+			changeLanguage: 'In English',
+			congratulationsCompleted: '¡Felicidades! Has completado el tablero.',
+			restartGame: 'Reiniciar juego',
+			footerMadeWith: 'Hecho con',
+			footerBy: 'por'
+		}
+	};
+	const localization = translatedStrings[language];
+
+	function changeLanguage() {
+		let newLang = language === 'es' ? 'en' : 'es';
+		let url = new URL(window.location.href);
+		url.searchParams.set('lang', newLang);
+		window.location.href = url.toString();
+	}
 </script>
 
 <main>
 	<h1>Number Sum</h1>
 	<div class="explanation">
 		<p>
-			The following {gridSize}x{gridSize} grid is partially complete with whole numbers from 1 to {maxNumber}.
+			{localization['explanationGridOfSize']}
+			{gridSize}x{gridSize}
+			{localization['explanationPartiallyComplete']}
+			{maxNumber}.
 		</p>
-		<p>The sum of each row and column is show on the edges of the grid.</p>
-		<p>Fill in the missing numbers to complete the grid.</p>
+		<p>{localization['explanationSumShown']}</p>
+		<p>{localization['explanationFillIn']}</p>
+		<button on:click={changeLanguage}>{localization['changeLanguage']}</button>
 	</div>
 
 	<table class="grid">
@@ -150,12 +201,13 @@
 	</table>
 
 	{#if isGameComplete()}
-		<p>Congratulations! You have completed the grid.</p>
-		<button on:click={() => location.reload()}>Restart Game</button>
+		<p>{localization['congratulationsCompleted']}</p>
+		<button on:click={() => location.reload()}>{localization['restartGame']}</button>
 	{/if}
 
 	<footer>
-		Made with <span class="heart">♥</span> by
+		{localization['footerMadeWith']} <span class="heart">♥</span>
+		{localization['footerBy']}
 		<a href="https://aitorres.com" title="Andrés Ignacio Torres">Andrés Ignacio Torres</a>
 	</footer>
 </main>
