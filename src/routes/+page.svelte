@@ -1,12 +1,18 @@
 <script lang="ts">
+    // Class names to provide visual feedback on the input fields
     const validClass = 'valid';
     const invalidClass = 'invalid';
 
+    // Game configuration
     let gridSize: number = 5;
     let maxNumber: number = 8;
-    let grid: number[][] = setupGrid(gridSize);
-    let partialGrid = grid.map(row => row.map(cell => Math.random() < 0.25 ? cell : null));
+    let shownNumberProportion: number = 0.40;
 
+    // Setting up game state -- this is only done once per game
+    let grid: number[][] = setupGrid(gridSize);
+    let partialGrid: (number | null)[][] = setupPartialGrid();
+
+    // Sets up the game grid with random numbers for a given size
     function setupGrid(size: number): number[][] {
         let grid: number[][] = [];
         for (let i = 0; i < size; i++) {
@@ -19,30 +25,40 @@
         return grid;
     }
 
+    // Sets up the partial grid with a proportion of the numbers shown,
+    // to be filled in by the player
+    function setupPartialGrid(): (number | null)[][] {
+        return grid.map(row => row.map(cell => Math.random() < shownNumberProportion ? cell : null));
+    }
+
+    // Returns the sum of a row in the grid
     function getRowSum(rowIndex: number): number {
         return grid[rowIndex].reduce((acc, cell) => acc + cell, 0);
     }
 
-
+    // Returns the sum of a column in the grid
     function getColumnSum(columnIndex: number): number {
         return grid.reduce((acc, row) => acc + row[columnIndex], 0);
     }
 
+    // On input field change, validates the input and provides visual feedback
     function validateGridInput(event: Event) {
         let input = event.target as HTMLInputElement;
         let value = input.value;
 
+        // If the input is empty, remove any visual feedback
         if (value === '') {
             input.classList.remove(validClass, invalidClass);
             return;
         }
 
-        let parsedValue = parseInt(value);
-
         let rowIndex = parseInt(input.dataset.row as string);
         let columnIndex = parseInt(input.dataset.column as string);
+
+        let parsedValue = parseInt(value);
         let expectedValue = grid[rowIndex][columnIndex];
 
+        // Add visual feedback based on the input value and the expected value
         if (parsedValue === expectedValue) {
             input.classList.remove(invalidClass);
             input.classList.add(validClass);
@@ -52,12 +68,37 @@
         }
     }
 
+    // Checks if the game is complete by checking if all input fields are filled
+    // and have the correct values
+    function isGameComplete(): boolean {
+        if (typeof document === 'undefined') {
+            return false;
+        }
+
+        let inputs = document.querySelectorAll('.gridInput');
+        for (let input of inputs) {
+            if ((input as HTMLInputElement).value === '' || input.classList.contains(invalidClass)) {
+            return false;
+            }
+        }
+
+        return true;
+    }
 </script>
+
 <main>
     <h1>Number Sum</h1>
-    <p>
-        The following {gridSize}x{gridSize} grid is partially complete with whole numbers from 1 to {maxNumber}.
-    </p>
+    <div class="explanation">
+        <p>
+            The following {gridSize}x{gridSize} grid is partially complete with whole numbers from 1 to {maxNumber}.
+        </p>
+        <p>
+            The sum of each row and column is show on the edges of the grid.
+        </p>
+        <p>
+            Fill in the missing numbers to complete the grid.
+        </p>
+    </div>
 
     <table class="grid">
         <tbody>
@@ -81,9 +122,41 @@
         {/each}
         </tbody>
     </table>
+
+    {#if isGameComplete()}
+        <p>Congratulations! You have completed the grid.</p>
+        <button on:click={() => location.reload()}>Restart Game</button>
+    {/if}
+
+    <footer>
+        Made with <span class="heart">♥</span> by <a href="https://aitorres.com" title="Andrés Ignacio Torres">Andrés Ignacio Torres</a>
+    </footer>
 </main>
 
 <style>
+    main {
+        font-family: "Helvetica", "Verdana", sans-serif;
+        min-width: 320px;
+        width: 60vw;
+        margin: 4em auto;
+    }
+
+    h1, p, footer {
+        text-align: center;
+    }
+
+    table, button {
+        margin: 0 auto;
+    }
+
+    button {
+        display: block;
+    }
+
+    .explanation, table, footer {
+        margin-top: 3em;
+        margin-bottom: 3em;
+    }
 
     :global(.valid) {
         border-color: green;
@@ -93,9 +166,17 @@
         border-color: red;
     }
 
+    .heart {
+        color: red;
+        font-weight: bold;
+    }
+
     td {
         vertical-align: middle;
         text-align: center;
+
+        width: 30px;
+        height: 30px;
     }
 
     .sum {
