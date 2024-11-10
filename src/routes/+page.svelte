@@ -202,8 +202,8 @@
 
 	{#if isGameComplete()}
 		<p>{localization['congratulationsCompleted']}</p>
-		<button on:click={() => location.reload()}>{localization['restartGame']}</button>
 	{/if}
+	<button on:click={() => location.reload()}>{localization['restartGame']}</button>
 
 	<footer>
 		{localization['footerMadeWith']} <span class="heart">♥</span>
@@ -233,6 +233,15 @@
 
 	button {
 		display: block;
+		background-color: #bacaf5;
+		border-radius: 20px;
+		border: 1px solid black;
+		padding: 0.5em 1em;
+		box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
+	}
+
+	button:active {
+		box-shadow: none;
 	}
 
 	.explanation,
