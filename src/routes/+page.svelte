@@ -6,7 +6,7 @@
 	// Game configuration
 	let gridSize: number = 5;
 	let maxNumber: number = 7;
-	let shownNumberProportion: number = 0.4;
+	let shownNumberProportion: number = 0.45;
 
 	// Setting up game state -- this is only done once per game
 	let grid: number[][] = setupGrid(gridSize);
@@ -92,7 +92,6 @@
 		// If any input field is empty or invalid, the game is not complete
 		for (let input of inputs) {
 			let inputValue = (input as HTMLInputElement).valueAsNumber;
-			console.log(input, inputValue, isNaN(inputValue), input.classList.contains(invalidClass));
 
 			if (isNaN(inputValue) || input.classList.contains(invalidClass)) {
 				return false;
@@ -252,7 +251,7 @@
 	}
 
 	:global(.valid) {
-		border-color: green;
+		border-color: rgb(153, 238, 153);
 	}
 
 	:global(.invalid) {
