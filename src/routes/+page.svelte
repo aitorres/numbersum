@@ -170,14 +170,14 @@
 		<tbody>
 			<tr>
 				<td></td>
-				{#each grid as _, columnIndex}
+				{#each grid as _, columnIndex (columnIndex)}
 					<td class="sum">{getColumnSum(columnIndex)}</td>
 				{/each}
 			</tr>
-			{#each partialGrid as row, rowIndex}
+			{#each partialGrid as row, rowIndex (rowIndex)}
 				<tr>
 					<td class="sum">{getRowSum(rowIndex)}</td>
-					{#each row as cell, columnIndex}
+					{#each row as cell, columnIndex (columnIndex)}
 						{#if cell === null}
 							<td
 								><input
