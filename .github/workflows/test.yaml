@@ -7,7 +7,20 @@ on:
   pull_request:
 
 jobs:
+  build_docker_image:
+    name: Build Docker image for validation
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t numbersum .
+
   test:
+    name: Run tests and checks
     runs-on: ubuntu-latest
 
     steps:
