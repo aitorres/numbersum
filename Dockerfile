@@ -11,7 +11,11 @@ COPY . .
 
 RUN npm run build
 
-# Expose through NGINX
-FROM nginx:alpine
+# Expose via httpd
+FROM busybox:musl
 
-COPY --from=builder /app/build /usr/share/nginx/html
+COPY --from=builder /app/build /var/www
+
+EXPOSE 80
+
+CMD ["httpd", "-f", "-v", "-p", "80", "-h", "/var/www"]
