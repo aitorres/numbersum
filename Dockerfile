@@ -14,11 +14,9 @@ RUN npm run build
 # Expose via httpd
 FROM busybox:musl
 
-RUN adduser -D appuser
+COPY --from=builder /app/build /var/www
 
-COPY --from=builder --chown=appuser:appuser /app/build /var/www
-
-USER appuser
+USER 1001
 
 EXPOSE 3000
 
