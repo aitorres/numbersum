@@ -14,8 +14,12 @@ RUN npm run build
 # Expose via httpd
 FROM busybox:musl
 
-COPY --from=builder /app/build /var/www
+RUN adduser -D appuser
 
-EXPOSE 80
+COPY --from=builder --chown=appuser:appuser /app/build /var/www
 
-CMD ["httpd", "-f", "-v", "-p", "80", "-h", "/var/www"]
+USER appuser
+
+EXPOSE 3000
+
+CMD ["httpd", "-f", "-v", "-p", "3000", "-h", "/var/www"]
